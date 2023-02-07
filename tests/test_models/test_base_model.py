@@ -41,6 +41,12 @@ class TestBaseModelClass(unittest.TestCase):
         self.assertEqual(
                 bm_dict["updated_at"], self.base.updated_at.isoformat())
 
+    def test_base_from_dict(self):
+        bm_dict = self.base.to_dict()
+        dummy_base_model = BaseModel(**bm_dict)
+        self.assertEqual(bm_dict, dummy_base_model.to_dict())
+
+
 
 # if __name__ == "__main__":
 # Do stuff
