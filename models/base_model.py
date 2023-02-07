@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 from uuid import uuid4
 from datetime import datetime
+from . import storage
 
 """
 This module defines the BaseModel class which defines all common attr/methods
@@ -25,6 +26,8 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
+
         else:
             kwargs.pop('__class__')
             for k, v in kwargs.items():
@@ -46,6 +49,7 @@ class BaseModel:
         Update attribute updated_at with current datetime
         """
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """
