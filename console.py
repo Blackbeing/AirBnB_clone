@@ -2,6 +2,7 @@
 import cmd
 import json
 from models.base_model import BaseModel
+from models.user import User
 from models import storage
 
 
@@ -10,11 +11,11 @@ def strip(s):
 
 
 class HBNBCommand(cmd.Cmd):
-    """ Simple command processor for the hbnb project """
+    """Simple command processor for the hbnb project"""
 
     prompt = "(hbnb) "
     intro = "A simple hbnb shell. Type help to list commands.\n"
-    hbnb_classes = ["BaseModel"]
+    hbnb_classes = ["BaseModel", "User"]
 
     def do_EOF(self, arg):
         """Exit"""
@@ -36,7 +37,8 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
         else:
-            new_base = BaseModel()
+            eval_string = f"{arg}()"
+            new_base = eval(eval_string)
             new_base.save()
             print(new_base.id)
 
@@ -58,13 +60,14 @@ class HBNBCommand(cmd.Cmd):
 
                 elif argc == 2:
                     storage.reload()
-                    instance_key = f"BaseModel.{strip(argv[1])}"
-                    base_model = storage.all().get(instance_key, None)
+                    instance_key = f"{argv[0]}.{strip(argv[1])}"
+                    instance_dict = storage.all().get(instance_key, None)
 
-                    if base_model is None:
+                    if instance_dict is None:
                         print("** no instance found ** ")
                     else:
-                        print(BaseModel(**base_model))
+                        eval_string = f"{argv[0]}(**instance_dict)"
+                        print(eval(eval_string))
 
     def do_destroy(self, arg):
         """Delete instance base on class name and id, save to json file"""
@@ -84,10 +87,10 @@ class HBNBCommand(cmd.Cmd):
 
                 elif argc == 2:
                     storage.reload()
-                    instance_key = f"BaseModel.{strip(argv[1])}"
-                    base_model = storage.all().get(instance_key, None)
+                    instance_key = f"{argv[0]}.{strip(argv[1])}"
+                    instance_dict = storage.all().get(instance_key, None)
 
-                    if base_model is None:
+                    if instance_dict is None:
                         print("** no instance found ** ")
                     else:
                         storage.all().pop(instance_key)
@@ -95,17 +98,33 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """Print string representation of all instances"""
+
+        def eval_str(string):
+            return string.split(".")[0]
+
         storage.reload()
+
         if arg == "":
-            print(json.dumps(
-                [str(BaseModel(**v)) for k, v in storage.all().items()]))
+            print(
+                json.dumps(
+                    [str(eval(f"{eval_str(k)}(**v)"))
+                     for k, v in storage.all().items()]
+                )
+            )
 
         else:
             if arg not in self.hbnb_classes:
                 print("** class doesn't exist **")
             else:
-                print(json.dumps(
-                    [str(BaseModel(**v)) for k, v in storage.all().items()]))
+                print(
+                    json.dumps(
+                        [
+                            str(eval(f"{arg}(**v)"))
+                            for k, v in storage.all().items()
+                            if arg == v["__class__"]
+                        ]
+                    )
+                )
 
     def do_update(self, arg):
         """Update/Add instance attribute based on class, name and id"""
@@ -127,10 +146,10 @@ class HBNBCommand(cmd.Cmd):
 
             else:
                 storage.reload()
-                instance_key = f"BaseModel.{strip(argv[1])}"
-                base_model = storage.all().get(instance_key, None)
+                instance_key = f"{argv[0]}.{strip(argv[1])}"
+                instance_dict = storage.all().get(instance_key, None)
 
-                if base_model is None:
+                if instance_dict is None:
                     print("** no instance found ** ")
                 else:
                     if argc < 3:
@@ -140,7 +159,7 @@ class HBNBCommand(cmd.Cmd):
                         print("** value missing **")
                         return
                     else:
-                        base_model[argv[2]] = strip(argv[3])
+                        instance_dict[argv[2]] = strip(argv[3])
                         storage.save()
 
 
