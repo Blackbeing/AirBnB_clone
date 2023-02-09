@@ -195,8 +195,14 @@ class HBNBCommand(cmd.Cmd):
         command, args, line = cmd.Cmd.parseline(self, arg)
         # ex. arg = User.all()
         # command, args, line = ("User", ".all()",  "User.all()")
-        args = args.replace(".", "").replace("(", "").replace(")", "")
-        new_arg = f"{args} {command}"
+        # args = args.replace(".", "").replace("(", "").replace(")", "")
+        do_cmd, _, add_args = args.strip(".)").partition("(")
+
+        if add_args == "":
+            new_arg = f"{do_cmd} {command}"
+        else:
+            new_arg = f"{do_cmd} {command} {add_args}"
+
         cmd.Cmd.onecmd(self, new_arg)
 
 
