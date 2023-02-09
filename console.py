@@ -2,6 +2,7 @@
 import cmd
 import json
 import shlex
+import textwrap
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -31,14 +32,29 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     def do_quit(self, arg):
-        """Quit command to exit the program"""
+        """ Quit command to exit the program """
         return True
 
     def postloop(self):
         print()
 
+    def precmd(self, arg):
+        """Capture help commands and parse method docstring using textwrap"""
+        ret = cmd.Cmd.precmd(self, arg)
+        if (len(ret.split()) > 1 and 'help' in ret):
+            eval_str = ret.replace("help", "do").replace(" ", "_")
+            eval_str = f"self.{eval_str}.__doc__"
+            ret = textwrap.dedent(eval(eval_str)).lstrip("\n")
+            print(ret)
+        return ret
+
     def do_create(self, arg):
-        """Create new instance of BaseModel, save to json file and print id"""
+        """
+        Create new instance of Class, save to json file and print id
+            Ex:
+            >> create BaseModel
+            >> Create User
+        """
         if not arg:
             print("** class name missing **")
 
@@ -52,7 +68,12 @@ class HBNBCommand(cmd.Cmd):
             print(new_base.id)
 
     def do_show(self, arg):
-        """Print string representation of instance if it exists"""
+        """
+        Print string representation of instance if it exists
+            Ex:
+            >> show Basemodel <id>
+            >> BaseModel.show(<id>)
+        """
         if not arg:
             print("** class name missing **")
 
@@ -79,7 +100,12 @@ class HBNBCommand(cmd.Cmd):
                         print(eval(eval_string))
 
     def do_destroy(self, arg):
-        """Delete instance base on class name and id, save to json file"""
+        """
+        Delete instance base on class name and id, save to json file
+            Ex:
+            >> destroy BaseModel <id>
+            >> BaseModel.destroy(<id>)
+        """
         if not arg:
             print("** class name missing **")
 
@@ -106,7 +132,12 @@ class HBNBCommand(cmd.Cmd):
                         storage.save()
 
     def do_all(self, arg):
-        """Print string representation of all instances"""
+        """
+        Print string representation of all instances
+            Ex:
+            >> all BaseModel
+            >> BaseModel.all()
+        """
 
         def eval_str(string):
             return string.split(".")[0]
@@ -136,8 +167,13 @@ class HBNBCommand(cmd.Cmd):
                 )
 
     def do_update(self, arg):
-        """Update/Add instance attribute based on class, name and id"""
-        # update User <user.id> <attr> <attr_value>
+        """
+        Update/Add instance attribute based on class, name and id
+            Ex:
+            >> update BaseModel <id> <attr> <attr_value>
+            >> BaseModel.update(<id> <attr> <attr_value>
+            >> BaseModel.update(<id> {"first_name": "BaseModel1", "Age": 10})
+        """
 
         if not arg:
             print("** class name missing **")
@@ -167,21 +203,27 @@ class HBNBCommand(cmd.Cmd):
                         print("** attribute name missing *")
                         return
                     try:
-                        instance_dict.update(json.loads(argv[2]))
-                        storage.save()
-                        return
-                    except json.decoder.JSONDecodeError:
+                        if argv[2].startswith("{") and argv[2].endswith("}"):
+                            instance_dict.update(json.loads(argv[2]))
+                            storage.save()
+                            return
+                    except (ValueError, json.decoder.JSONDecodeError):
                         pass
 
                     if argc < 4:
                         print("** value missing **")
                         return
                     else:
-                        instance_dict[argv[2]] = strip(argv[3])
+                        instance_dict[strip(argv[2])] = strip(argv[3])
                         storage.save()
 
     def do_count(self, arg):
-        """Count number of instances of a class"""
+        """
+        Count number of instances of a class
+            Ex:
+            >> count BaseModel
+            >> BaseModel.count()
+        """
 
         if not arg:
             print("** class name missing **")
@@ -205,9 +247,13 @@ class HBNBCommand(cmd.Cmd):
         command, args, line = cmd.Cmd.parseline(self, arg)
         # ex. arg = User.all()
         # command, args, line = ("User", ".all()",  "User.all()")
-        # args = args.replace(".", "").replace("(", "").replace(")", "")
+
         if command in self.hbnb_classes:
             do_cmd, _, add_args = args.strip(".)").partition("(")
+
+            if do_cmd == "":
+                print("No command found, use help")
+                return
 
             if add_args == "":
                 new_arg = f"{do_cmd} {command}"
@@ -219,6 +265,8 @@ class HBNBCommand(cmd.Cmd):
                     if add_arg.strip().startswith("{"):
                         add_args[idx] = add_arg.replace(" ", "").replace(
                                 "'", '"')
+                    else:
+                        add_args[idx] = add_arg.replace(",", "")
 
                 add_args = " ".join(add_args)
                 new_arg = f"{do_cmd} {command} {add_args}"
