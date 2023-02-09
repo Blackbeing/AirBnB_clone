@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import cmd
 import json
+import shlex
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -56,7 +57,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
 
         else:
-            argv = arg.split(" ")
+            argv = shlex.split(arg)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -83,7 +84,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
 
         else:
-            argv = arg.split(" ")
+            argv = shlex.split(arg)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -141,7 +142,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
 
         else:
-            argv = arg.split(" ")
+            argv = shlex.split(arg)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -177,7 +178,7 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
 
         else:
-            argv = arg.split(" ")
+            argv = shlex.split(arg)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -196,14 +197,19 @@ class HBNBCommand(cmd.Cmd):
         # ex. arg = User.all()
         # command, args, line = ("User", ".all()",  "User.all()")
         # args = args.replace(".", "").replace("(", "").replace(")", "")
-        do_cmd, _, add_args = args.strip(".)").partition("(")
+        if command in self.hbnb_classes:
 
-        if add_args == "":
-            new_arg = f"{do_cmd} {command}"
-        else:
-            new_arg = f"{do_cmd} {command} {add_args}"
+            do_cmd, _, add_args = args.strip(".)").partition("(")
 
-        cmd.Cmd.onecmd(self, new_arg)
+            # Convert args to a list and join with spaces
+            add_args = " ".join(add_args.split(","))
+
+            if add_args == "":
+                new_arg = f"{do_cmd} {command}"
+            else:
+                new_arg = f"{do_cmd} {command} {add_args}"
+
+            cmd.Cmd.onecmd(self, new_arg)
 
 
 if __name__ == "__main__":
