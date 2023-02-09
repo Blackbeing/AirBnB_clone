@@ -170,6 +170,24 @@ class HBNBCommand(cmd.Cmd):
                         instance_dict[argv[2]] = strip(argv[3])
                         storage.save()
 
+    def do_count(self, arg):
+        """Count number of instances of a class """
+
+        if not arg:
+            print("** class name missing **")
+
+        else:
+            argv = arg.split(" ")
+            argc = len(argv)
+
+            if argv[0] not in self.hbnb_classes:
+                print("** class doesn't exist **")
+            else:
+                storage.reload()
+                count = [v for v in storage.all().values()
+                         if arg == v["__class__"]]
+                print(len(count))
+
     def default(self, arg):
         """Parse unrecognized command prefixes"""
 
