@@ -1,9 +1,14 @@
 #!/usr/bin/python3
 import cmd
 import json
+from models import storage
 from models.base_model import BaseModel
 from models.user import User
-from models import storage
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 def strip(s):
@@ -15,7 +20,10 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb) "
     intro = "A simple hbnb shell. Type help to list commands.\n"
-    hbnb_classes = ["BaseModel", "User"]
+    hbnb_classes = [
+            "BaseModel", "User", "State", "City",
+            "Amenity", "Place", "Review"
+    ]
 
     def do_EOF(self, arg):
         """Exit"""
@@ -161,6 +169,17 @@ class HBNBCommand(cmd.Cmd):
                     else:
                         instance_dict[argv[2]] = strip(argv[3])
                         storage.save()
+
+    def default(self, arg):
+        """Parse unrecognized command prefixes"""
+
+        # parseline returns tuple (command, args, line)
+        command, args, line = cmd.Cmd.parseline(self, arg)
+        # ex. arg = User.all()
+        # command, args, line = ("User", ".all()",  "User.all()")
+        args = args.replace(".", "").replace("(", "").replace(")", "")
+        new_arg = f"{args} {command}"
+        cmd.Cmd.onecmd(self, new_arg)
 
 
 if __name__ == "__main__":
