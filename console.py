@@ -137,12 +137,14 @@ class HBNBCommand(cmd.Cmd):
 
     def do_update(self, arg):
         """Update/Add instance attribute based on class, name and id"""
+        # update User <user.id> <attr> <attr_value>
 
         if not arg:
             print("** class name missing **")
 
         else:
-            argv = shlex.split(arg)
+            # argv = shlex.split(arg)
+            argv = arg.split()
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -164,6 +166,13 @@ class HBNBCommand(cmd.Cmd):
                     if argc < 3:
                         print("** attribute name missing *")
                         return
+                    try:
+                        instance_dict.update(json.loads(argv[2]))
+                        storage.save()
+                        return
+                    except json.decoder.JSONDecodeError:
+                        pass
+
                     if argc < 4:
                         print("** value missing **")
                         return
@@ -172,7 +181,7 @@ class HBNBCommand(cmd.Cmd):
                         storage.save()
 
     def do_count(self, arg):
-        """Count number of instances of a class """
+        """Count number of instances of a class"""
 
         if not arg:
             print("** class name missing **")
@@ -198,15 +207,20 @@ class HBNBCommand(cmd.Cmd):
         # command, args, line = ("User", ".all()",  "User.all()")
         # args = args.replace(".", "").replace("(", "").replace(")", "")
         if command in self.hbnb_classes:
-
             do_cmd, _, add_args = args.strip(".)").partition("(")
-
-            # Convert args to a list and join with spaces
-            add_args = " ".join(add_args.split(","))
 
             if add_args == "":
                 new_arg = f"{do_cmd} {command}"
+
             else:
+                # Convert args to a list and join with spaces
+                add_args = add_args.split(",", 1)
+                for idx, add_arg in enumerate(add_args):
+                    if add_arg.strip().startswith("{"):
+                        add_args[idx] = add_arg.replace(" ", "").replace(
+                                "'", '"')
+
+                add_args = " ".join(add_args)
                 new_arg = f"{do_cmd} {command} {add_args}"
 
             cmd.Cmd.onecmd(self, new_arg)
