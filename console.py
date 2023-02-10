@@ -38,15 +38,25 @@ class HBNBCommand(cmd.Cmd):
     def postloop(self):
         print()
 
+    def emptyline(self):
+        pass
+
     def precmd(self, arg):
         """Capture help commands and parse method docstring using textwrap"""
-        ret = cmd.Cmd.precmd(self, arg)
-        if (len(ret.split()) > 1 and 'help' in ret):
-            eval_str = ret.replace("help", "do").replace(" ", "_")
+
+        command, args, line = cmd.Cmd.parseline(self, arg)
+        if command == "help" and args != "":
+            eval_str = line.replace("help", "do").replace(" ", "_")
             eval_str = f"self.{eval_str}.__doc__"
-            ret = textwrap.dedent(eval(eval_str)).lstrip("\n")
-            print(ret)
-        return ret
+            try:
+                ret = textwrap.dedent(eval(eval_str)).lstrip("\n")
+                print(ret)
+            except AttributeError:
+                print("No such command")
+            finally:
+                return ""
+
+        return line
 
     def do_create(self, arg):
         """
