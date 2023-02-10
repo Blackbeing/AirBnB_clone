@@ -18,7 +18,7 @@ class TestBaseModelClass(unittest.TestCase):
         self.assertIsInstance(self.base.updated_at, datetime)
 
     def test_base_str(self):
-        self.assertEqual (
+        self.assertEqual(
             self.base.__str__(),
             f"[{self.base.__class__.__name__}] \
 ({self.base.id}) {self.base.__dict__}"
@@ -45,8 +45,3 @@ class TestBaseModelClass(unittest.TestCase):
         bm_dict = self.base.to_dict()
         dummy_base_model = BaseModel(**bm_dict)
         self.assertEqual(bm_dict, dummy_base_model.to_dict())
-
-
-
-# if __name__ == "__main__":
-# Do stuff

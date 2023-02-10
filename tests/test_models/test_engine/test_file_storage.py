@@ -35,5 +35,3 @@ class TestFileStorage(unittest.TestCase):
     def test_reload(self):
         self.storage.reload()
         self.assertTrue(self.storage.all() != {})
-
-
