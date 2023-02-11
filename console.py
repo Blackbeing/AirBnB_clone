@@ -21,7 +21,7 @@ class HBNBCommand(cmd.Cmd):
     """Simple command processor for the hbnb project"""
 
     prompt = "(hbnb) "
-    intro = "A simple hbnb shell. Type help to list commands.\n"
+    # intro = "A simple hbnb shell. Type help to list commands.\n"
     hbnb_classes = [
             "BaseModel", "User", "State", "City",
             "Amenity", "Place", "Review"
