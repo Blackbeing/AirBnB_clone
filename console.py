@@ -220,8 +220,11 @@ class HBNBCommand(cmd.Cmd):
                         print("** value missing **")
                         return
                     else:
-                        instance.__dict__[strip(argv[2])] = strip(argv[3])
-                        storage.save()
+                        dont_update = ["id", "created_at", "updated_at"]
+                        attribute = strip(argv[2])
+                        if attribute not in dont_update:
+                            instance.__dict__[strip(argv[2])] = strip(argv[3])
+                            storage.save()
 
     def do_count(self, arg):
         """
