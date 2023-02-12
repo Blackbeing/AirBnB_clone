@@ -2,9 +2,7 @@
 import unittest
 from datetime import datetime
 
-from models.user import User
-from models import storage
-from models.base_model import BaseModel
+from models import User, storage, BaseModel
 
 
 class TestUserClass(unittest.TestCase):
