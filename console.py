@@ -90,6 +90,7 @@ class HBNBCommand(cmd.Cmd):
 
         else:
             argv = shlex.split(arg)
+            print(argv)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -99,7 +100,7 @@ class HBNBCommand(cmd.Cmd):
                 if argc == 1:
                     print("** instance id missing ** ")
 
-                elif argc == 2:
+                else:
                     storage.reload()
                     instance_key = f"{argv[0]}.{strip(argv[1])}"
                     instance = storage.all().get(instance_key, None)
@@ -130,7 +131,7 @@ class HBNBCommand(cmd.Cmd):
                 if argc == 1:
                     print("** instance id missing ** ")
 
-                elif argc == 2:
+                else:
                     storage.reload()
                     instance_key = f"{argv[0]}.{strip(argv[1])}"
                     instance = storage.all().get(instance_key, None)
