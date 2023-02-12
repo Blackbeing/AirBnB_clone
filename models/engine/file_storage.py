@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+This module defines Filestorage class which serializes objects to JSON
+Saves objects to JSON, and retrieves objects from JSON file
+"""
 import json
 from pathlib import Path
 
@@ -44,9 +48,12 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def __init__(self, file_path=None):
-        if file_path is not None:
-            FileStorage.__file_path = file_path
+    # def __init__(self, file_path=None):
+    #     """
+    #     Initialize Filestorage object
+    #     """
+    #     if file_path is not None:
+    #         FileStorage.__file_path = file_path
 
     def all(self):
         """

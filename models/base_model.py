@@ -32,6 +32,13 @@ class BaseModel:
             return False
 
     def __init__(self, *args, **kwargs):
+        """
+        Create BaseModel object, or load from dict object
+
+        Arguments:
+            args (list): list (not used)
+            kwargs (dict): dictionary
+        """
         if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.now()
