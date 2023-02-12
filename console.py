@@ -254,30 +254,30 @@ class HBNBCommand(cmd.Cmd):
         # ex. arg = User.all()
         # command, args, line = ("User", ".all()",  "User.all()")
 
-        if command in self.hbnb_classes:
-            do_cmd, _, add_args = args.strip(".)").partition("(")
+        # if command in self.hbnb_classes:
+        do_cmd, _, add_args = args.strip(".)").partition("(")
 
-            if do_cmd == "":
-                print("No command found, use help")
-                return
+        if do_cmd == "":
+            print("No command found, use help")
+            return
 
-            if add_args == "":
-                new_arg = f"{do_cmd} {command}"
+        if add_args == "":
+            new_arg = f"{do_cmd} {command}"
 
-            else:
-                # Convert args to a list and join with spaces
-                add_args = add_args.split(",", 1)
-                for idx, add_arg in enumerate(add_args):
-                    if add_arg.strip().startswith("{"):
-                        add_args[idx] = add_arg.replace(
-                                " ", "").replace("'", '"')
-                    else:
-                        add_args[idx] = add_arg.replace(",", "")
+        else:
+            # Convert args to a list and join with spaces
+            add_args = add_args.split(",", 1)
+            for idx, add_arg in enumerate(add_args):
+                if add_arg.strip().startswith("{"):
+                    add_args[idx] = add_arg.replace(
+                            " ", "").replace("'", '"')
+                else:
+                    add_args[idx] = add_arg.replace(",", "")
 
-                add_args = " ".join(add_args)
-                new_arg = f"{do_cmd} {command} {add_args}"
+            add_args = " ".join(add_args)
+            new_arg = f"{do_cmd} {command} {add_args}"
 
-            cmd.Cmd.onecmd(self, new_arg)
+        cmd.Cmd.onecmd(self, new_arg)
 
 
 if __name__ == "__main__":
