@@ -10,7 +10,7 @@ class TestFileStorage(unittest.TestCase):
     def setUpClass(cls):
         cls.fp = tempfile.NamedTemporaryFile()
         cls.file_path = cls.fp.name
-        cls.storage = FileStorage(cls.file_path)
+        cls.storage = FileStorage()
         cls.base = BaseModel()
 
     @classmethod
