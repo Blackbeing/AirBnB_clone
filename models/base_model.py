@@ -1,7 +1,7 @@
 #!/usr/bin/python3
+import models
 from uuid import uuid4
 from datetime import datetime
-from . import storage
 
 """
 This module defines the BaseModel class which defines all common attr/methods
@@ -21,12 +21,22 @@ class BaseModel:
         kwargs (dict): Keyword arguments
     """
 
+    def __eq__(self, other):
+        if isinstance(other, dict):
+            if self.to_dict() == other:
+                return True
+            return False
+        else:
+            if self.to_dict() == other.to_dict():
+                return True
+            return False
+
     def __init__(self, *args, **kwargs):
         if not kwargs:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
-            storage.new(self)
+            models.storage.new(self)
 
         else:
             kwargs.pop('__class__')
@@ -49,7 +59,7 @@ class BaseModel:
         Update attribute updated_at with current datetime
         """
         self.updated_at = datetime.now()
-        storage.save()
+        models.storage.save()
 
     def to_dict(self):
         """

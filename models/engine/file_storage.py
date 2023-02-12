@@ -2,9 +2,13 @@
 import json
 from pathlib import Path
 
-
-ALL_CLASSES = ["BaseModel", "User", "State",
-               "City", "Amenity", "Place", "Review"]
+from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class BaseModelEncoder(json.JSONEncoder):
@@ -15,9 +19,22 @@ class BaseModelEncoder(json.JSONEncoder):
         dictionary if obj is instance of BaseModel, else default object
     """
     def default(self, obj):
-        if obj.__class__.__name__ in ALL_CLASSES:
+        if isinstance(obj, BaseModel):
             return obj.to_dict()
         return super().default(self, obj)
+
+
+def base_model_object_hook(dct):
+    """
+    Function that will be called with the result of any object literal decoded
+
+    Returns:
+        BaseModel instance or default object
+    """
+
+    if "__class__" in dct:
+        return eval(f"{dct['__class__']}(**dct)")
+    return dct
 
 
 class FileStorage:
@@ -59,4 +76,5 @@ class FileStorage:
         """
         if Path(FileStorage.__file_path).exists():
             with open(FileStorage.__file_path, 'r', encoding='utf-8') as fd:
-                FileStorage.__objects = json.load(fd)
+                FileStorage.__objects = json.load(
+                        fd, object_hook=base_model_object_hook)
