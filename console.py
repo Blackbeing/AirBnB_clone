@@ -1,4 +1,8 @@
 #!/usr/bin/python3
+"""
+This module defines the entry point of the hbnb command interpreter used
+to interact with hbnb framework
+"""
 import cmd
 import json
 import shlex
@@ -21,7 +25,6 @@ class HBNBCommand(cmd.Cmd):
     """Simple command processor for the hbnb project"""
 
     prompt = "(hbnb) "
-    # intro = "A simple hbnb shell. Type help to list commands.\n"
     hbnb_classes = [
             "BaseModel", "User", "State", "City",
             "Amenity", "Place", "Review"
