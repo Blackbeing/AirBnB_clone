@@ -242,7 +242,8 @@ class HBNBCommand(cmd.Cmd):
             else:
                 storage.reload()
                 count = [v for v in storage.all().values()
-                         if arg == v["__class__"]]
+                         if arg == v.__class__.__name__
+                         ]
                 print(len(count))
 
     def default(self, arg):
