@@ -25,17 +25,15 @@ class HBNBCommand(cmd.Cmd):
     """Simple command processor for the hbnb project"""
 
     prompt = "(hbnb) "
-    hbnb_classes = [
-            "BaseModel", "User", "State", "City",
-            "Amenity", "Place", "Review"
-    ]
+    hbnb_classes = ["BaseModel", "User", "State",
+                    "City", "Amenity", "Place", "Review"]
 
     def do_EOF(self, arg):
         """Exit"""
         return True
 
     def do_quit(self, arg):
-        """ Quit command to exit the program """
+        """Quit command to exit the program"""
         return True
 
     def postloop(self):
@@ -104,13 +102,12 @@ class HBNBCommand(cmd.Cmd):
                 elif argc == 2:
                     storage.reload()
                     instance_key = f"{argv[0]}.{strip(argv[1])}"
-                    instance_dict = storage.all().get(instance_key, None)
+                    instance = storage.all().get(instance_key, None)
 
-                    if instance_dict is None:
+                    if instance is None:
                         print("** no instance found ** ")
                     else:
-                        eval_string = f"{argv[0]}(**instance_dict)"
-                        print(eval(eval_string))
+                        print(instance)
 
     def do_destroy(self, arg):
         """
@@ -136,9 +133,9 @@ class HBNBCommand(cmd.Cmd):
                 elif argc == 2:
                     storage.reload()
                     instance_key = f"{argv[0]}.{strip(argv[1])}"
-                    instance_dict = storage.all().get(instance_key, None)
+                    instance = storage.all().get(instance_key, None)
 
-                    if instance_dict is None:
+                    if instance is None:
                         print("** no instance found ** ")
                     else:
                         storage.all().pop(instance_key)
@@ -158,12 +155,7 @@ class HBNBCommand(cmd.Cmd):
         storage.reload()
 
         if arg == "":
-            print(
-                json.dumps(
-                    [str(eval(f"{eval_str(k)}(**v)"))
-                     for k, v in storage.all().items()]
-                )
-            )
+            print(json.dumps([str(v) for k, v in storage.all().items()]))
 
         else:
             if arg not in self.hbnb_classes:
@@ -172,9 +164,9 @@ class HBNBCommand(cmd.Cmd):
                 print(
                     json.dumps(
                         [
-                            str(eval(f"{arg}(**v)"))
+                            str(v)
                             for k, v in storage.all().items()
-                            if arg == v["__class__"]
+                            if arg == v.__class__.__name__
                         ]
                     )
                 )
@@ -207,9 +199,9 @@ class HBNBCommand(cmd.Cmd):
             else:
                 storage.reload()
                 instance_key = f"{argv[0]}.{strip(argv[1])}"
-                instance_dict = storage.all().get(instance_key, None)
+                instance = storage.all().get(instance_key, None)
 
-                if instance_dict is None:
+                if instance is None:
                     print("** no instance found ** ")
                 else:
                     if argc < 3:
@@ -217,7 +209,7 @@ class HBNBCommand(cmd.Cmd):
                         return
                     try:
                         if argv[2].startswith("{") and argv[2].endswith("}"):
-                            instance_dict.update(json.loads(argv[2]))
+                            instance.__dict__.update(json.loads(argv[2]))
                             storage.save()
                             return
                     except (ValueError, json.decoder.JSONDecodeError):
@@ -227,7 +219,7 @@ class HBNBCommand(cmd.Cmd):
                         print("** value missing **")
                         return
                     else:
-                        instance_dict[strip(argv[2])] = strip(argv[3])
+                        instance.__dict__[strip(argv[2])] = strip(argv[3])
                         storage.save()
 
     def do_count(self, arg):
@@ -276,8 +268,8 @@ class HBNBCommand(cmd.Cmd):
                 add_args = add_args.split(",", 1)
                 for idx, add_arg in enumerate(add_args):
                     if add_arg.strip().startswith("{"):
-                        add_args[idx] = add_arg.replace(" ", "").replace(
-                                "'", '"')
+                        add_args[idx] = add_arg.replace(
+                                " ", "").replace("'", '"')
                     else:
                         add_args[idx] = add_arg.replace(",", "")
 
