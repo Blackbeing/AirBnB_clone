@@ -1,8 +1,15 @@
 #!/usr/bin/python3
+"""
+This module defines Place Class
+"""
+
 from models.base_model import BaseModel
 
 
 class Place(BaseModel):
+    """
+    Place  class
+    """
     city_id = ""
     user_id = ""
     name = ""
