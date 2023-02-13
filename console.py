@@ -90,7 +90,6 @@ class HBNBCommand(cmd.Cmd):
 
         else:
             argv = shlex.split(arg)
-            print(argv)
             argc = len(argv)
 
             if argv[0] not in self.hbnb_classes:
@@ -98,7 +97,7 @@ class HBNBCommand(cmd.Cmd):
 
             else:
                 if argc == 1:
-                    print("** instance id missing ** ")
+                    print("** instance id missing **")
 
                 else:
                     storage.reload()
@@ -106,7 +105,7 @@ class HBNBCommand(cmd.Cmd):
                     instance = storage.all().get(instance_key, None)
 
                     if instance is None:
-                        print("** no instance found ** ")
+                        print("** no instance found **")
                     else:
                         print(instance)
 
@@ -129,7 +128,7 @@ class HBNBCommand(cmd.Cmd):
 
             else:
                 if argc == 1:
-                    print("** instance id missing ** ")
+                    print("** instance id missing **")
 
                 else:
                     storage.reload()
@@ -137,7 +136,7 @@ class HBNBCommand(cmd.Cmd):
                     instance = storage.all().get(instance_key, None)
 
                     if instance is None:
-                        print("** no instance found ** ")
+                        print("** no instance found **")
                     else:
                         storage.all().pop(instance_key)
                         storage.save()
@@ -194,7 +193,7 @@ class HBNBCommand(cmd.Cmd):
                 return
 
             if argc < 2:
-                print("** instance id missing ** ")
+                print("** instance id missing **")
                 return
 
             else:
@@ -203,7 +202,7 @@ class HBNBCommand(cmd.Cmd):
                 instance = storage.all().get(instance_key, None)
 
                 if instance is None:
-                    print("** no instance found ** ")
+                    print("** no instance found **")
                 else:
                     if argc < 3:
                         print("** attribute name missing *")
