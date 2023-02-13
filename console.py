@@ -40,6 +40,7 @@ class HBNBCommand(cmd.Cmd):
         print()
 
     def emptyline(self):
+        """Action if empty line (don't do anything)"""
         pass
 
     def precmd(self, arg):
