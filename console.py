@@ -205,7 +205,7 @@ class HBNBCommand(cmd.Cmd):
                     print("** no instance found **")
                 else:
                     if argc < 3:
-                        print("** attribute name missing *")
+                        print("** attribute name missing **")
                         return
                     try:
                         if argv[2].startswith("{") and argv[2].endswith("}"):
